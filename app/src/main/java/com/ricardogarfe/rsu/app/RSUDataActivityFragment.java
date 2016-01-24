@@ -14,16 +14,16 @@ import java.util.List;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment {
+public class RSUDataActivityFragment extends Fragment {
 
-    public MainActivityFragment() {
+    public RSUDataActivityFragment() {
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        View rootView = inflater.inflate(R.layout.rsu_data_fragment, container, false);
 
         List<String> rsuLocationResults = new ArrayList<>();
         rsuLocationResults.add("CONTENEDORES DE PILAS - MERCADO ROJAS CLEMENTE");
