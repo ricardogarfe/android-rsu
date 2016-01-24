@@ -2,4 +2,13 @@
     <string name="app_name">Contenedores RSU</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello World!</string>
+
+    <!-- Navigation Menu -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="city">Valencia</string>
+    <string name="rsu_description">Contenedores de Residuos Urbanos</string>
+    <string name="batteries">Pilas</string>
+    <string name="oil">Aceite</string>
+    <string name="clothes">Ropa</string>
 </resources>
