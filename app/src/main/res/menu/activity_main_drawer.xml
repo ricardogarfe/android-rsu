@@ -2,11 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
-        <item android:id="@+id/nav_batteries" android:icon="@android:drawable/ic_menu_camera"
+        <item android:id="@+id/nav_batteries" android:icon="@drawable/low_battery"
             android:title="@string/batteries" />
-        <item android:id="@+id/nav_oil" android:icon="@android:drawable/ic_menu_gallery"
+        <item android:id="@+id/nav_oil" android:icon="@drawable/oil"
             android:title="@string/oil" />
-        <item android:id="@+id/nav_clothes" android:icon="@android:drawable/ic_menu_slideshow"
+        <item android:id="@+id/nav_clothes" android:icon="@drawable/t_shirt"
             android:title="@string/clothes" />
     </group>
 </menu>
