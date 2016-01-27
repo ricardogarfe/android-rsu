@@ -11,4 +11,8 @@
     <string name="batteries">Pilas</string>
     <string name="oil">Aceite</string>
     <string name="clothes">Ropa</string>
+    <string name="trash">Residuos</string>
+    <string name="plastic">Envases</string>
+    <string name="cardboard">Cartón</string>
+    <string name="glass">Vidrio</string>
 </resources>
