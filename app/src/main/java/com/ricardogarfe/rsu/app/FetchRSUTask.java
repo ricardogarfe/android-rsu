@@ -7,15 +7,20 @@ import android.util.Base64;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
-public class FetchRSUTask extends AsyncTask <String, Void, Void>{
-
+public class FetchRSUTask extends AsyncTask <String, Void, List<String>>{
 
     private final String LOG_TAG = FetchRSUTask.class.getSimpleName();
 
@@ -26,18 +31,25 @@ public class FetchRSUTask extends AsyncTask <String, Void, Void>{
         mContext = context;
         mRsuAdapter = rsuAdapter;
     }
+
     @Override
-    protected Void doInBackground(String[] params) {
+    protected List<String> doInBackground(String[] params) {
         // If there's no zip code, there's nothing to look up.  Verify size of params.
         if (params.length == 0) {
             return null;
         }
-
-        getContainerDataFromAPI(params[0], params[1], params[2]);
-        return null;
+        return getContainerDataFromAPI(params[0], params[1], params[2]);
     }
 
-    private void getContainerDataFromAPI(String containerType, String latitude, String longitude) {
+    /**
+     * API call to retrieve data from container type and location.
+     *
+     * @param containerType
+     * @param latitude
+     * @param longitude
+     * @return
+     */
+    private List<String> getContainerDataFromAPI(String containerType, String latitude, String longitude) {
 
         // These two need to be declared outside the try/catch
         // so that they can be closed in the finally block.
@@ -45,7 +57,7 @@ public class FetchRSUTask extends AsyncTask <String, Void, Void>{
         BufferedReader reader = null;
 
         // Will contain the raw JSON response as a string.
-        String forecastJsonStr = null;
+        String rsuContainerJsonStr = null;
 
         String format = "json";
         String units = "metric";
@@ -61,13 +73,11 @@ public class FetchRSUTask extends AsyncTask <String, Void, Void>{
             final String basicAuth = "Basic " + Base64.encodeToString(
                     "user:password".getBytes(), Base64.NO_WRAP);
 
-
             Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
                     .appendPath(containerType)
                     .appendPath(latitude)
                     .appendPath(longitude)
                     .build();
-
 
             URL url = new URL(builtUri.toString());
 
@@ -82,7 +92,7 @@ public class FetchRSUTask extends AsyncTask <String, Void, Void>{
             StringBuffer buffer = new StringBuffer();
             if (inputStream == null) {
                 // Nothing to do.
-                return;
+                return null;
             }
             reader = new BufferedReader(new InputStreamReader(inputStream));
 
@@ -96,10 +106,10 @@ public class FetchRSUTask extends AsyncTask <String, Void, Void>{
 
             if (buffer.length() == 0) {
                 // Stream was empty.  No point in parsing.
-                return;
+                return null;
             }
-            forecastJsonStr = buffer.toString();
-            Log.i(LOG_TAG, "JSON Response:\t" + forecastJsonStr);
+            rsuContainerJsonStr = buffer.toString();
+            Log.i(LOG_TAG, "JSON Response:\t" + rsuContainerJsonStr);
 
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error ", e);
@@ -116,5 +126,68 @@ public class FetchRSUTask extends AsyncTask <String, Void, Void>{
             }
         }
 
+        try {
+            return getRSUContainerFromJson(rsuContainerJsonStr);
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, e.getMessage(), e);
+            e.printStackTrace();
+        }
+        // This will only happen if there was an error getting or parsing data.
+        return null;
+    }
+
+    /**
+     * Parse JSON data from the server into String
+     *
+     * @param rsuContainerJsonStr
+     * @return
+     * @throws JSONException
+     */
+    private List<String> getRSUContainerFromJson(String rsuContainerJsonStr) throws JSONException {
+        // These are the names of the JSON objects that need to be extracted.
+
+        List<String> rsuContainerInfo = new ArrayList();
+
+        // Container information
+        final String RSU_TITTLE = "titulo";
+        final String RSU_MESSAGE= "mensaje";
+        final String RSU_DISTANCE = "distancia";
+        final String RSU_LONDESTINY = "lonDestino";
+        final String RSU_LATDESTINY = "latDestino";
+
+        JSONArray rsuContainerJsonArray = new JSONArray(rsuContainerJsonStr);
+
+        // Variables from rsu api response
+        JSONObject rsuJsonObject;
+        long latDestiny;
+        long lonDestiny;
+        int distance;
+        String tittle;
+        String message;
+
+        for (int i = 0; i < rsuContainerJsonArray.length(); i++) {
+
+            rsuJsonObject = rsuContainerJsonArray.getJSONObject(i);
+            tittle = rsuJsonObject.getString(RSU_TITTLE);
+            message = rsuJsonObject.getString(RSU_MESSAGE);
+            distance = rsuJsonObject.getInt(RSU_DISTANCE);
+            lonDestiny = rsuJsonObject.getInt(RSU_LONDESTINY);
+            latDestiny = rsuJsonObject.getInt(RSU_LATDESTINY);
+
+            rsuContainerInfo.add(message);
+
+        }
+
+        return rsuContainerInfo;
+    }
+
+    @Override
+    protected void onPostExecute(List<String> result) {
+        if (result != null && mRsuAdapter != null) {
+            mRsuAdapter.clear();
+            for(String rsuContainerStr : result) {
+                mRsuAdapter.add(rsuContainerStr);
+            }
+        }
     }
 }

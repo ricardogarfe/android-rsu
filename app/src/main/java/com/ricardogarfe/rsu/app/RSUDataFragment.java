@@ -8,8 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -32,29 +31,12 @@ public class RSUDataFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_rsu_data, container, false);
 
-        String[] rsuStringItems = {
-                "CONTENEDORES DE PILAS",
-                "CONTENEDORES DE PILAS",
-                "CONTENEDORES DE PILAS"
-        };
-
-        String[] rsuStringMessage = {
-                "MERCADO ROJAS CLEMENTE\nBotanico\nNúmero de contenedores: 1",
-                "MERCADO CENTRAL\\nPlaza Mercado\\nNúmero de contenedores: 1",
-                "COLEGIO JESUS-MARIA\\nG.V. Fernando el Catolico, 37\\nNúmero de contenedores: 1"
-        };
-
-        /*
-        http://mapas.valencia.es/lanzadera/gps/contenedores/pilas/39471791/-382460
-         */
-        List<String> rsuLocationResults = Arrays.asList(rsuStringItems);
-
         rsuLocationAdapter =
                 new ArrayAdapter<>(
                         getActivity(),
                         R.layout.list_item_rsu,
                         R.id.list_item_rsu_textview,
-                        rsuLocationResults);
+                        new ArrayList<String>());
 
         ListView listView = (ListView) rootView.findViewById(R.id.listview_rsu);
 
