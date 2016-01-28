@@ -8,6 +8,7 @@ env:
     - MALLOC_ARENA_MAX=2
     # wait up to 10 minutes for adb to connect to emulator
     - ADB_INSTALL_TIMEOUT=10
+    - secure: $COVERITY_SCAN_TOKEN
 
 android:
   components:
@@ -20,6 +21,17 @@ android:
   licenses:
     - '.+'
 
-script:
-  - ./gradlew assemble lint
+script: 
+  - ./gradlew build check
+# Coverity Scan Settings
+#-----------------------
 
+addons:
+  coverity_scan:
+    project:
+      name: "ricardogarfe/android-rsu"
+    notification_email: ricardogarfe@gmai.com
+# Scan results: https://scan.coverity.com/projects/ricardogarfe-android-rsu
+    build_command_prepend: "./gradlew clean"
+    build_command: "./gradlew build"
+    branch_pattern: master
