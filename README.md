@@ -1,3 +1,7 @@
+<a href="https://scan.coverity.com/projects/ricardogarfe-android-rsu">
+  <img alt="Coverity Scan Build Status"
+       src="https://img.shields.io/coverity/scan/7751.svg"/>
+</a>
 [![LGPLv3 License](http://img.shields.io/badge/license-LGPLv3-blue.svg)](LICENSE)
 [![Build Status](https://travis-ci.org/ricardogarfe/android-rsu.svg?branch=master)](https://travis-ci.org/ricardogarfe/android-rsu)
 [![Circle CI](https://circleci.com/gh/ricardogarfe/android-rsu.svg?style=shield)](https://circleci.com/gh/ricardogarfe/android-rsu)
