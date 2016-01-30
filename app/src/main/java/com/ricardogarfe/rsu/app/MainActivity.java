@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setLogo(R.mipmap.ic_launcher);
 
@@ -45,15 +46,6 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        RSUDataFragment fragment = new RSUDataFragment();
-        Bundle args = new Bundle();
-        args.putString(RSUDataFragment.TYPE_PARAM, BATTERIES);
-        fragment.setArguments(args);
-
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .add(R.id.fragment, fragment, RSUINFORMATIONFRAGMENT_TAG).commit();
 
     }
 
@@ -108,7 +100,10 @@ public class MainActivity extends AppCompatActivity
         // Insert the fragment by replacing any existing fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.fragment, fragment, RSUINFORMATIONFRAGMENT_TAG).commit();
+                .remove(fragment).commit();
+
+        fragmentManager.beginTransaction()
+                .attach(fragment).commit();
 
         // Highlight the selected item, update the title, and close the drawer
         getSupportActionBar().setTitle(selectedContainer);
