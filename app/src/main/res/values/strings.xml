@@ -15,4 +15,5 @@
     <string name="plastic">Envases</string>
     <string name="cardboard">Cartón</string>
     <string name="glass">Vidrio</string>
+    <string name="title_activity_rsuinformation">RSUInformationActivity</string>
 </resources>

@@ -1,10 +1,12 @@
 package com.ricardogarfe.rsu.app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -41,6 +43,17 @@ public class RSUDataFragment extends Fragment {
         ListView listView = (ListView) rootView.findViewById(R.id.listview_rsu);
 
         listView.setAdapter(rsuLocationAdapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                String rsuDataInfo = rsuLocationAdapter.getItem(position);
+                Intent intent = new Intent(getActivity(), RSUInformationActivity.class)
+                        .putExtra(Intent.EXTRA_TEXT, rsuDataInfo);
+                startActivity(intent);
+            }
+        });
 
         return rootView;
     }
