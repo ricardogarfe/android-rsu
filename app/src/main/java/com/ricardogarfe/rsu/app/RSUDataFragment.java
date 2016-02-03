@@ -20,7 +20,8 @@ public class RSUDataFragment extends Fragment {
     private static final String LOG_TAG = RSUDataFragment.class.getSimpleName();
     final static String LAT = "39471791";
     final static String LONG  = "-382460";
-    final static String TYPE_PARAM = "pilas";
+
+    private String containerType;
 
     private ArrayAdapter<String> rsuLocationAdapter;
 
@@ -30,6 +31,8 @@ public class RSUDataFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        setContainerTypeFromBundle();
 
         View rootView = inflater.inflate(R.layout.fragment_rsu_data, container, false);
 
@@ -58,9 +61,25 @@ public class RSUDataFragment extends Fragment {
         return rootView;
     }
 
+    private void setContainerTypeFromBundle() {
+        Bundle argumentsFromMenu = getArguments();
+        if ( null == argumentsFromMenu) {
+            containerType = Utility.BATTERIES;
+        } else {
+            containerType = argumentsFromMenu.getString(Utility.CONTAINER);
+        }
+    }
+
     private void updateRSU() {
         FetchRSUTask fetchRSUTask = new FetchRSUTask(getContext(), rsuLocationAdapter);
-        fetchRSUTask.execute(TYPE_PARAM, LAT, LONG);
+        fetchRSUTask.execute(containerType, LAT, LONG);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setContainerTypeFromBundle();
+        updateRSU();
     }
 
     @Override

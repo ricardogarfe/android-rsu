@@ -3,27 +3,21 @@ package com.ricardogarfe.rsu.app;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final String RSUINFORMATIONFRAGMENT_TAG = "DFTAG";
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    public static final String BATTERIES = "pilas";
-    public static final String OIL = "aceite";
-    public static final String CLOTHES = "ropa";
-    public static final String CARDBOARD = "carton";
-    public static final String GLASS = "vidrio";
-    public static final String BOTTLING = "envases";
-    public static final String WASTE = "residuos";
+    private static final String RSUINFORMATIONFRAGMENT_TAG = "DFTAG";
 
     private ActionBarDrawerToggle drawerToggle;
 
@@ -47,6 +41,14 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        // Init fragment values.
+        updateRSUDataFragment(Utility.BATTERIES);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i(LOG_TAG, "OnResume from MainActivy.");
     }
 
     @Override
@@ -89,48 +91,48 @@ public class MainActivity extends AppCompatActivity
 
         // Retrieve selected containers
         String selectedContainer = getSelectedContainerd(id);
-
-        // Create a new fragment and specify the option to show based on
-        // position
-        RSUDataFragment fragment = new RSUDataFragment();
-        Bundle args = new Bundle();
-        args.putString(RSUDataFragment.TYPE_PARAM, selectedContainer);
-        fragment.setArguments(args);
-
-        // Insert the fragment by replacing any existing fragment
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .remove(fragment).commit();
-
-        fragmentManager.beginTransaction()
-                .attach(fragment).commit();
+        // Update Fragment values.
+        updateRSUDataFragment(selectedContainer);
 
         // Highlight the selected item, update the title, and close the drawer
-        getSupportActionBar().setTitle(selectedContainer);
+        getSupportActionBar().setTitle(item.getTitle());
+        getSupportActionBar().setIcon(item.getIcon());
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void updateRSUDataFragment(String selectedContainer) {
+        // Create a new fragment and specify the option to show based on
+        // position
+        RSUDataFragment fragment = new RSUDataFragment();
+        Bundle intentParameters = new Bundle();
+        intentParameters.putString(Utility.CONTAINER, selectedContainer);
+        fragment.setArguments(intentParameters);
+
+        // Insert the fragment by replacing any existing fragment
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.content_rsu_main, fragment).commit();
     }
 
     @NonNull
     private String getSelectedContainerd(int id) {
         String selectedContainer = "";
         if (id == R.id.nav_batteries) {
-            selectedContainer = BATTERIES;
+            selectedContainer = Utility.BATTERIES;
         } else if (id == R.id.nav_oil) {
-            selectedContainer = OIL;
+            selectedContainer = Utility.OIL;
         } else if (id == R.id.nav_clothes) {
-            selectedContainer = CLOTHES;
+            selectedContainer = Utility.CLOTHES;
         } else if (id == R.id.nav_cardboard) {
-            selectedContainer = CARDBOARD;
+            selectedContainer = Utility.CARDBOARD;
         } else if (id == R.id.nav_glass) {
-            selectedContainer = GLASS;
+            selectedContainer = Utility.GLASS;
         } else if (id == R.id.nav_plastic) {
-            selectedContainer = BOTTLING;
+            selectedContainer = Utility.BOTTLING;
         } else if (id == R.id.nav_waste) {
-            selectedContainer = WASTE;
+            selectedContainer = Utility.WASTE;
         }
         return selectedContainer;
     }
-
 }
