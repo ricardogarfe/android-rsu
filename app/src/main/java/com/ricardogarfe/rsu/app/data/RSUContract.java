@@ -39,6 +39,24 @@ public class RSUContract {
     public static final String PATH_LOCATION = "location";
     public static final String PATH_TYPE = "type";
 
+    /* Inner class that defines the table contents of the container type table */
+    public static final class TypeEntry implements BaseColumns {
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_TYPE).build();
+
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TYPE;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TYPE;
+
+        public static final String TABLE_NAME = "type";
+
+        public static final String COLUMN_NAME = "name";
+
+        public static final String COLUMN_ICON = "icon";
+    }
+
     /*
         Inner class that defines the table contents of the location table
      */
@@ -57,26 +75,10 @@ public class RSUContract {
         // Human readable location string, provided by the API.
         public static final String COLUMN_CITY_NAME = "city_name";
 
-    }
+        // Lat and Long values for retrived container.
+        public static final String COLUMN_LAT_DEST = "latDestiny";
+        public static final String COLUMN_LONG_DEST = "longDestiny";
 
-    /* Inner class that defines the table contents of the container type table */
-    public static final class TypeEntry implements BaseColumns {
-
-        public static final Uri CONTENT_URI =
-                BASE_CONTENT_URI.buildUpon().appendPath(PATH_TYPE).build();
-
-        public static final String CONTENT_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TYPE;
-        public static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TYPE;
-
-        public static final String TABLE_NAME = "type";
-
-        public static final String COLUMN_TYPE_ID = "type_id";
-
-        public static final String COLUMN_NAME = "name";
-
-        public static final String COLUMN_ICON = "icon";
     }
 
     /* Inner class that defines the table contents of the container table */
@@ -92,7 +94,6 @@ public class RSUContract {
 
         public static final String TABLE_NAME = "container";
 
-        public static final String COLUMN_CONTAINER_ID = "container_id";
         // Column with the foreign key into the location table.
         public static final String COLUMN_LOC_KEY = "location_id";
         // Column with the foreign key into the type table.
@@ -104,10 +105,6 @@ public class RSUContract {
 
         // Short description and long description of the direction, as provided by API.
         public static final String COLUMN_MESSAGE = "message";
-
-        // Lat and Long values for retrived container.
-        public static final String COLUMN_LAT_DEST = "latDestiny";
-        public static final String COLUMN_LONG_DEST = "longDestiny";
 
     }
 }
