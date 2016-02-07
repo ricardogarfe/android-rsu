@@ -52,9 +52,9 @@ public class RSUDataFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 String rsuDataInfo = rsuLocationAdapter.getItem(position);
-                Intent intent = new Intent(getActivity(), RSUInformationActivity.class)
-                        .putExtra(Intent.EXTRA_TEXT, rsuDataInfo);
-                startActivity(intent);
+                Intent intent = new Intent(getActivity(), RSUInformationActivity.class);
+                intent.putExtra(Intent.EXTRA_TEXT, rsuDataInfo);
+                startActivity(intent) ;
             }
         });
 

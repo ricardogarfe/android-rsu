@@ -14,6 +14,14 @@ public class RSUInformationActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        RSUInformationActivityFragment rsuInformationActivityFragment = new RSUInformationActivityFragment();
+        Bundle intentParameters = new Bundle();
+        rsuInformationActivityFragment.setArguments(intentParameters);
+
+        // Insert the fragment by replacing any existing fragment
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.content_rsu_info, rsuInformationActivityFragment).commit();
     }
 
 }
