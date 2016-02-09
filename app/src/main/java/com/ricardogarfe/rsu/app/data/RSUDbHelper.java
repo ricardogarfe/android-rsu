@@ -51,8 +51,8 @@ public class RSUDbHelper extends SQLiteOpenHelper {
         final String SQL_CREATE_LOCATION_TABLE = "CREATE TABLE " + LocationEntry.TABLE_NAME + " (" +
                                                          LocationEntry._ID + " INTEGER PRIMARY KEY," +
                                                          LocationEntry.COLUMN_CITY_NAME + " TEXT NOT NULL, " +
-                                                         LocationEntry.COLUMN_LAT_DEST + " REAL NOT NULL, " +
-                                                         LocationEntry.COLUMN_LONG_DEST + " REAL NOT NULL " +
+                                                         LocationEntry.COLUMN_LAT_DEST + " INTEGER NOT NULL, " +
+                                                         LocationEntry.COLUMN_LONG_DEST + " INTEGER NOT NULL " +
                                                          " );";
 
         final String SQL_CREATE_CONTAINER_TABLE = "CREATE TABLE " + ContainerEntry.TABLE_NAME + " (" +

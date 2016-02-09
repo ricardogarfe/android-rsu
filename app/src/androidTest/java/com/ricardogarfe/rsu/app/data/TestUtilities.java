@@ -16,9 +16,9 @@ public class TestUtilities extends AndroidTestCase {
     static final String CONTAINER_TITLE = "CONTENEDORES DE PILAS";
     static final String CONTAINER_MESSAGE = "MERCADO ROJAS CLEMENTE\\nBotanico\\nNúmero de contenedores: 1";
     static final String CITY_NAME = "Valencia";
-    static final long CONTAINER_DISTANCE = 39472993L;
-    static final long LAT_DEST = 39472993L;
-    static final long LONG_DEST = -385258L;
+    static final long CONTAINER_DISTANCE = 257;
+    static final long LAT_DEST = 39472993;
+    static final long LONG_DEST = -385258;
 
     static void validateCursor(String error, Cursor valueCursor, ContentValues expectedValues) {
         assertTrue("Empty cursor returned. " + error, valueCursor.moveToFirst());
