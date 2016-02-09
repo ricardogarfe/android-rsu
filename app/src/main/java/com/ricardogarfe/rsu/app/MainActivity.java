@@ -105,14 +105,14 @@ public class MainActivity extends AppCompatActivity
     private void updateRSUDataFragment(String selectedContainer) {
         // Create a new fragment and specify the option to show based on
         // position
-        RSUDataFragment fragment = new RSUDataFragment();
+        RSUDataFragment forecastFragment = new RSUDataFragment();
+
         Bundle intentParameters = new Bundle();
         intentParameters.putString(Utility.CONTAINER, selectedContainer);
-        fragment.setArguments(intentParameters);
+        forecastFragment.setArguments(intentParameters);
 
-        // Insert the fragment by replacing any existing fragment
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.content_rsu_main, fragment).commit();
+                .replace(R.id.content_rsu_main, forecastFragment).commit();
     }
 
     @NonNull

@@ -13,8 +13,6 @@ public class RSUInformationActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         RSUInformationActivityFragment rsuInformationActivityFragment = new RSUInformationActivityFragment();
         Bundle intentParameters = new Bundle();
         rsuInformationActivityFragment.setArguments(intentParameters);
