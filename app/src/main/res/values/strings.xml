@@ -16,4 +16,7 @@
     <string name="cardboard">Cartón</string>
     <string name="glass">Vidrio</string>
     <string name="title_activity_rsuinformation">RSUInformationActivity</string>
+
+    <!-- Content Provider -->
+    <string name="content_authority">com.ricardogarfe.rsu.app</string>
 </resources>

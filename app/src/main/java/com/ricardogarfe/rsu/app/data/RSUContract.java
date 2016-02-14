@@ -129,6 +129,18 @@ public class RSUContract {
         }
 
         /**
+         * Create URI to select container by latitude and longitude
+         * @param latitude
+         * @param longitude
+         * @return
+         */
+        public static Uri buildContainerWithLocation(long latitude, long longitude) {
+            return CONTENT_URI.buildUpon().appendPath(Long.toString(latitude))
+                           .appendPath(Long.toString(longitude)).build();
+        }
+
+
+        /**
          * Create URI to select container by type and location from latitude an longitude
          * @param containerType
          * @param latitude
@@ -152,6 +164,7 @@ public class RSUContract {
         public static long getLongitudeFromUri(Uri uri) {
             return Long.parseLong(uri.getPathSegments().get(3));
         }
+
 
     }
 }

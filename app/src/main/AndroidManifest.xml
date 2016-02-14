@@ -30,6 +30,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.ricardogarfe.rsu.app.MainActivity" />
         </activity>
+
+        <provider
+            android:authorities="@string/content_authority"
+            android:name=".data.RSUProvider"
+            android:exported="false"
+            android:syncable="true" />
+
     </application>
 
 </manifest>
