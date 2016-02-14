@@ -16,6 +16,7 @@
 package com.ricardogarfe.rsu.app.data;
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -55,6 +56,10 @@ public class RSUContract {
         public static final String COLUMN_NAME = "name";
 
         public static final String COLUMN_ICON = "icon";
+
+        public static Uri buildTypeUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
     }
 
     /*
@@ -79,13 +84,17 @@ public class RSUContract {
         public static final String COLUMN_LAT_DEST = "latDestiny";
         public static final String COLUMN_LONG_DEST = "longDestiny";
 
+        public static Uri buildLocationUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
     }
 
     /* Inner class that defines the table contents of the container table */
     public static final class ContainerEntry implements BaseColumns {
 
         public static final Uri CONTENT_URI =
-                BASE_CONTENT_URI.buildUpon().appendPath(PATH_CONTAINER).build();
+                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_CONTAINER).build();
 
         public static final String CONTENT_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_CONTAINER;
@@ -105,6 +114,44 @@ public class RSUContract {
 
         // Short description and long description of the direction, as provided by API.
         public static final String COLUMN_MESSAGE = "message";
+
+        public static Uri buildContainerUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+        /**
+         * Create URI to select container by type
+         * @param containerType
+         * @return
+         */
+        public static Uri buildContainerWithType(String containerType) {
+            return CONTENT_URI.buildUpon().appendPath(containerType).build();
+        }
+
+        /**
+         * Create URI to select container by type and location from latitude an longitude
+         * @param containerType
+         * @param latitude
+         * @param longitude
+         * @return
+         */
+        public static Uri buildContainerWithTypeAndLocation(String containerType, long latitude, long longitude) {
+            return CONTENT_URI.buildUpon().appendPath(containerType)
+                           .appendPath(Long.toString(latitude))
+                           .appendPath(Long.toString(longitude)).build();
+        }
+
+        public static String getTypeSettingFromUri(Uri uri) {
+            return uri.getPathSegments().get(1);
+        }
+
+        public static long getLatitudeFromUri(Uri uri) {
+            return Long.parseLong(uri.getPathSegments().get(2));
+        }
+
+        public static long getLongitudeFromUri(Uri uri) {
+            return Long.parseLong(uri.getPathSegments().get(3));
+        }
 
     }
 }
