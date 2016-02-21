@@ -1,8 +1,10 @@
 package com.ricardogarfe.rsu.app.data;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Build;
 import android.test.AndroidTestCase;
 
@@ -128,6 +130,121 @@ public class TestRSUProvider extends AndroidTestCase {
         }
     }
 
+
+    public void testInsertReadProvider() {
+
+        // Location Insert
+        ContentValues locationValues = TestUtilities.createValenciaLocationValues();
+
+        // Register a content observer for our insert.  This time, directly with the content resolver
+        TestUtilities.TestContentObserver tco = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(RSUContract.LocationEntry.CONTENT_URI, true, tco);
+        Uri locationUri = mContext.getContentResolver().insert(RSUContract.LocationEntry.CONTENT_URI, locationValues);
+
+        // Did our content observer get called?  Students:  If this fails, your insert location
+        // isn't calling getContext().getContentResolver().notifyChange(uri, null);
+        tco.waitForNotificationOrFail();
+        mContext.getContentResolver().unregisterContentObserver(tco);
+
+        long locationRowId = ContentUris.parseId(locationUri);
+
+        // Verify we got a row back.
+        assertTrue(locationRowId != -1);
+
+        // Data's inserted.  IN THEORY.  Now pull some out to stare at it and verify it made
+        // the round trip.
+
+        // A cursor is your primary interface to the query results.
+        Cursor locationCursor = mContext.getContentResolver().query(
+                                                                   RSUContract.LocationEntry.CONTENT_URI,
+                                                                   null, // leaving "columns" null just returns all the columns.
+                                                                   null, // cols for "where" clause
+                                                                   null, // values for "where" clause
+                                                                   null  // sort order
+        );
+
+        TestUtilities.validateCursor("testInsertReadProvider. Error validating LocationEntry.",
+                                            locationCursor, locationValues);
+
+        // Type Insert
+        ContentValues typeValues = TestUtilities.createTypeValues();
+
+        // Register a content observer for our insert.  This time, directly with the content resolver
+        tco = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(RSUContract.TypeEntry.CONTENT_URI, true, tco);
+        Uri typeUri = mContext.getContentResolver().insert(RSUContract.TypeEntry.CONTENT_URI, typeValues);
+
+        // Did our content observer get called?  Students:  If this fails, your insert location
+        // isn't calling getContext().getContentResolver().notifyChange(uri, null);
+        tco.waitForNotificationOrFail();
+        mContext.getContentResolver().unregisterContentObserver(tco);
+
+        long typeRowId = ContentUris.parseId(typeUri);
+
+        // Verify we got a row back.
+        assertTrue(typeRowId != -1);
+
+        // Data's inserted.  IN THEORY.  Now pull some out to stare at it and verify it made
+        // the round trip.
+
+        // A cursor is your primary interface to the query results.
+        Cursor typeCursor = mContext.getContentResolver().query(
+                                                                   RSUContract.TypeEntry.CONTENT_URI,
+                                                                   null, // leaving "columns" null just returns all the columns.
+                                                                   null, // cols for "where" clause
+                                                                   null, // values for "where" clause
+                                                                   null  // sort order
+        );
+
+        TestUtilities.validateCursor("testInsertReadProvider. Error validating TypeEntry.",
+                                            typeCursor, typeValues);
+
+
+        // Container test values
+        ContentValues containerValues = TestUtilities.createContainerValues(locationRowId, typeRowId);
+        // The TestContentObserver is a one-shot class
+        tco = TestUtilities.getTestContentObserver();
+
+        mContext.getContentResolver().registerContentObserver(RSUContract.ContainerEntry.CONTENT_URI, true, tco);
+        Uri containerInsertUri = mContext.getContentResolver()
+                                       .insert(RSUContract.ContainerEntry.CONTENT_URI, containerValues);
+
+        assertTrue(containerInsertUri != null);
+
+        // Did our content observer get called?  Students:  If this fails, your insert location
+        // isn't calling getContext().getContentResolver().notifyChange(uri, null);
+        tco.waitForNotificationOrFail();
+        mContext.getContentResolver().unregisterContentObserver(tco);
+
+        long containerRowId = ContentUris.parseId(containerInsertUri);
+
+        // Verify we got a row back.
+        assertTrue(containerRowId != -1);
+
+        // A cursor is your primary interface to the query results.
+        Cursor containerCursor = mContext.getContentResolver().query(
+                                                                          RSUContract.ContainerEntry.CONTENT_URI,  // Table to Query
+                                                                          null, // leaving "columns" null just returns all the columns.
+                                                                          null, // cols for "where" clause
+                                                                          null, // values for "where" clause
+                                                                          null // columns to group by
+        );
+
+        TestUtilities.validateCursor("testInsertReadProvider. Error validating ContainerEntry insert.",
+                                            containerCursor, containerValues);
+
+        // Get the joined Container and Type data
+        containerCursor = mContext.getContentResolver().query(
+                                                                     RSUContract.ContainerEntry.buildContainerWithType(TestUtilities.TEST_TYPE),
+                                                                     null, // leaving "columns" null just returns all the columns.
+                                                                     null, // cols for "where" clause
+                                                                     null, // values for "where" clause
+                                                                     null  // sort order
+        );
+        TestUtilities.validateCursor("testInsertReadProvider.  Error validating joined Container type Data.",
+                                            containerCursor, containerValues);
+
+    }
 
     /*
        This helper function deletes all records from both database tables using the database

@@ -2,16 +2,25 @@ package com.ricardogarfe.rsu.app.data;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.test.AndroidTestCase;
 
 import com.ricardogarfe.rsu.app.R;
+import com.ricardogarfe.rsu.app.utils.PollingCheck;
 
 import java.util.Map;
 import java.util.Set;
 
 public class TestUtilities extends AndroidTestCase {
+
+    static final String TEST_TYPE = "pilas";
+    static final long TEST_LAT = 222222 ;
+    static final long TEST_LONG = -333333;
 
     static final String CONTAINER_TITLE = "CONTENEDORES DE PILAS";
     static final String CONTAINER_MESSAGE = "MERCADO ROJAS CLEMENTE\\nBotanico\\nNúmero de contenedores: 1";
@@ -19,6 +28,7 @@ public class TestUtilities extends AndroidTestCase {
     static final long CONTAINER_DISTANCE = 257;
     static final long LAT_DEST = 39472993;
     static final long LONG_DEST = -385258;
+    // intentionally includes a slash to make sure Uri is getting quoted correctly
 
     static void validateCursor(String error, Cursor valueCursor, ContentValues expectedValues) {
         assertTrue("Empty cursor returned. " + error, valueCursor.moveToFirst());
@@ -73,7 +83,7 @@ public class TestUtilities extends AndroidTestCase {
         // Create a new map of values, where column names are the keys
         ContentValues testValues = new ContentValues();
         testValues.put(RSUContract.TypeEntry.COLUMN_ICON, R.drawable.low_battery);
-        testValues.put(RSUContract.TypeEntry.COLUMN_NAME, R.string.batteries);
+        testValues.put(RSUContract.TypeEntry.COLUMN_NAME, TEST_TYPE);
         return testValues;
     }
 
@@ -106,4 +116,49 @@ public class TestUtilities extends AndroidTestCase {
 
         return typeRowId;
     }
+    static class TestContentObserver extends ContentObserver {
+        final HandlerThread mHT;
+        boolean mContentChanged;
+
+        static TestContentObserver getTestContentObserver() {
+            HandlerThread ht = new HandlerThread("ContentObserverThread");
+            ht.start();
+            return new TestContentObserver(ht);
+        }
+
+        private TestContentObserver(HandlerThread ht) {
+            super(new Handler(ht.getLooper()));
+            mHT = ht;
+        }
+
+        // On earlier versions of Android, this onChange method is called
+        @Override
+        public void onChange(boolean selfChange) {
+            onChange(selfChange, null);
+        }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            mContentChanged = true;
+        }
+
+        public void waitForNotificationOrFail() {
+            // Note: The PollingCheck class is taken from the Android CTS (Compatibility Test Suite).
+            // It's useful to look at the Android CTS source for ideas on how to test your Android
+            // applications.  The reason that PollingCheck works is that, by default, the JUnit
+            // testing framework is not running on the main Android application thread.
+            new PollingCheck(5000) {
+                @Override
+                protected boolean check() {
+                    return mContentChanged;
+                }
+            }.run();
+            mHT.quit();
+        }
+    }
+
+    static TestContentObserver getTestContentObserver() {
+        return TestContentObserver.getTestContentObserver();
+    }
+
 }
