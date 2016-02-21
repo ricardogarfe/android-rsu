@@ -246,27 +246,83 @@ public class TestRSUProvider extends AndroidTestCase {
 
     }
 
-    /*
-       This helper function deletes all records from both database tables using the database
-       functions only.  This is designed to be used to reset the state of the database until the
-       delete functionality is available in the ContentProvider.
-    */
-    public void deleteAllRecordsFromDB() {
-        RSUDbHelper dbHelper = new RSUDbHelper(mContext);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+    public void testDeleteRecords() {
+        testInsertReadProvider();
 
-        db.delete(RSUContract.ContainerEntry.TABLE_NAME, null, null);
-        db.delete(RSUContract.LocationEntry.TABLE_NAME, null, null);
-        db.delete(RSUContract.TypeEntry.TABLE_NAME, null, null);
-        db.close();
+        // Register a content observer for our type delete.
+        TestUtilities.TestContentObserver typeObserver = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(RSUContract.TypeEntry.CONTENT_URI, true, typeObserver);
+
+        // Register a content observer for our location delete.
+        TestUtilities.TestContentObserver locationObserver = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(RSUContract.LocationEntry.CONTENT_URI, true, locationObserver);
+
+        // Register a content observer for our container delete.
+        TestUtilities.TestContentObserver containerObserver = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(RSUContract.ContainerEntry.CONTENT_URI, true, containerObserver);
+
+        deleteAllRecordsFromProvider();
+
+        typeObserver.waitForNotificationOrFail();
+        locationObserver.waitForNotificationOrFail();
+        containerObserver.waitForNotificationOrFail();
+
+        mContext.getContentResolver().unregisterContentObserver(typeObserver);
+        mContext.getContentResolver().unregisterContentObserver(locationObserver);
+        mContext.getContentResolver().unregisterContentObserver(containerObserver);
     }
 
-    /*
-        Student: Refactor this function to use the deleteAllRecordsFromProvider functionality once
-        you have implemented delete functionality there.
-     */
+    public void deleteAllRecordsFromProvider() {
+
+        mContext.getContentResolver().delete(
+                                                    RSUContract.TypeEntry.CONTENT_URI,
+                                                    null,
+                                                    null
+        );
+        mContext.getContentResolver().delete(
+                                                    RSUContract.LocationEntry.CONTENT_URI,
+                                                    null,
+                                                    null
+        );
+        mContext.getContentResolver().delete(
+                                                    RSUContract.ContainerEntry.CONTENT_URI,
+                                                    null,
+                                                    null
+        );
+
+        Cursor cursor = mContext.getContentResolver().query(
+                                                                   RSUContract.ContainerEntry.CONTENT_URI,
+                                                                   null,
+                                                                   null,
+                                                                   null,
+                                                                   null
+        );
+        assertEquals("Error: Records not deleted from Container table during delete", 0, cursor.getCount());
+        cursor.close();
+
+        cursor = mContext.getContentResolver().query(
+                                                            RSUContract.LocationEntry.CONTENT_URI,
+                                                            null,
+                                                            null,
+                                                            null,
+                                                            null
+        );
+        assertEquals("Error: Records not deleted from Location table during delete", 0, cursor.getCount());
+        cursor.close();
+
+        cursor = mContext.getContentResolver().query(
+                                                            RSUContract.TypeEntry.CONTENT_URI,
+                                                            null,
+                                                            null,
+                                                            null,
+                                                            null
+        );
+        assertEquals("Error: Records not deleted from Type table during delete", 0, cursor.getCount());
+        cursor.close();
+    }
+
     public void deleteAllRecords() {
-        deleteAllRecordsFromDB();
+        deleteAllRecordsFromProvider();
     }
 
     // Since we want each test to start with a clean slate, run deleteAllRecords
